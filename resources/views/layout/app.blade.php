@@ -70,6 +70,14 @@
         $(function() {
 
 
+            const money_format = (num) => {
+                var numb = new Intl.NumberFormat();
+                return '₦ ' + numb.format(num);
+            }
+
+
+
+
             $("#search").on('keyup', function(e) {
                 e.preventDefault()
                 param = $('#search');
@@ -106,28 +114,44 @@
                                 No item found
                             </div>
                         `)
+                        return;
                     }
 
+               
+
+
+                    string = '';
+
                     res.map((item, index) => {
-                        body.append(`
-                            <a href="javascript:;" class="text-dark search_item" data-data='${JSON.stringify(item)}' >
-                                <div class="d-flex justify-content-between  py-1">
-                                    <div class="w-10">
-                                        <span> # ${item.id}</span>
-                                    </div>
-                                    <div class="w-50">
-                                        <span class="fw-bold"> ${item.name} </span>
-                                    </div>
-                                    <div class="w-20">
-                                        <span>${item.price}</span>
-                                    </div>
-                                    <div class="">
-                                        <span>6</span>
-                                    </div>
-                                </div>
-                            </a>
+                        string += (`
+                            <tr class=" search_item ${(item.quantity > 0) ? ` ` : `bg-danger text-white`} " data-data='${JSON.stringify(item)}' style="cursor: pointer" >
+                                <td>#${item.id}</td>
+                                <td>         
+                                    <span class="fw-bold"> ${item.name} </span> 
+                                </td>
+                                <td>${money_format(item.price)}</td>
+                                <td> ${(item.quantity > 0) ? item.quantity : `Out of Stock`} </td>
+                            </tr>
                         `)
                     })
+
+
+                    body.append(`
+                        <table class="table table-hover table-sm ">
+                            <thead>
+                                <tr>
+                                    <th>#Item</th>
+                                    <th>Name</th>
+                                    <th>Price</th>
+                                    <th>Aval Qty</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${string}
+                            <tbody>
+                    </table>
+                    `)
+
                 }).fail((res) => {
                     console.log(res);
                 })

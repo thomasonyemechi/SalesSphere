@@ -21,6 +21,9 @@ class ItemController extends Controller
     function searchItem(Request $request)
     {
         $items = Item::where('name', 'like', "%$request->s%")->get(['name', 'price', 'id']);
+        foreach($items as $item) {
+            $item['quantity'] = itemQty($item->id);
+        }
         return response($items);
     }
 

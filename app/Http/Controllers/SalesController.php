@@ -8,11 +8,13 @@ use App\Models\SalesSummary;
 use App\Models\Stock;
 use Illuminate\Http\Request;
 
-class SalesController extends Controller
+class SalesController extends StockController
 {
+
+
+
     function makeSales(Request $request)
     {
-
         $customer_id = $this->updateOrCreateClient($request->customer_phone);
 
 
@@ -94,5 +96,11 @@ class SalesController extends Controller
 
 
         return view('pos.today_sales', compact(['total_sales', 'amount', 'sales', 'day']));
+    }
+
+
+    function purchasingIndex()
+    {
+        return view('pos.purchasing');
     }
 }

@@ -13,7 +13,7 @@ class StockController extends Controller
 {
     function restockIndex()
     {
-        return view('admin.re_stock');
+        // return view('admin.re_stock');
     }
 
 
@@ -21,13 +21,13 @@ class StockController extends Controller
     {
  
 
-        $supplier_id = $this->updateOrCreateSupplier($request->supplier_phone);
+        $supplier_id = $this->updateOrCreateSupplier($request->customer_phone);
 
 
         $summary = RestockSummary::create([
             'supplier_id' => $supplier_id,
             'total' => 0,
-            'amount_paid' => $request->advance
+            'amount_paid' => 0
         ]);
 
 
@@ -67,7 +67,7 @@ class StockController extends Controller
         ]);
 
         return response([
-            'message' => 'Items has been added to stock',
+            'message' => 'Restock completed',
             'sales_id' => $summary->id,
             'status' => true
         ]);

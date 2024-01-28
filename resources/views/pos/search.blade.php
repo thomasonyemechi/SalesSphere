@@ -14,7 +14,7 @@
 
 <div class="form-group search-con">
     <input type="search" id="search" class="form-control py-1" 
-        placeholder="Scan Item to restock" autofocus autocomplete="yZZ">
+        placeholder="Scan Item to add" autofocus >
     <div class="sbox rounded-bottom border shadow bg-white p-2" style="width: 100%; display: none">
     </div>
 </div>

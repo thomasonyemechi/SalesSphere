@@ -275,7 +275,7 @@
 @push('scripts')
     <script>
         $(function() {
-            $('#modify_userhours').modal('show');
+            //$('#modify_userhours').modal('show');
         })
     </script>
 @endpush

@@ -10,12 +10,12 @@
         <!--Navbar nav -->
         <ul class="navbar-nav navbar-right-wrap ms-auto d-flex nav-top-wrap">
             <li class="dropdown ms-2 mt-1">
-                <a class="dropdown-item bold fw-bold" href="/">
+                <a class="dropdown-item bold fw-bold" href="/pos?trno={{ rand(111111, 3444444445409) }}">
                     Point of Sales
                 </a>
             </li>
             <li class="dropdown ms-2 mt-1">
-                <a class="dropdown-item bold fw-bold" href="/">
+                <a class="dropdown-item bold fw-bold" href="/purchasing">
                     Purchasing
                 </a>
             </li>

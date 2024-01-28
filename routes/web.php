@@ -8,6 +8,7 @@ use App\Http\Controllers\ItemController;
 use App\Http\Controllers\SalesController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\StockController;
+use App\Http\Controllers\TestController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -24,6 +25,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return redirect('/login');
 });
+
+Route::get('/load_product', [TestController::class, 'loadProduct']);
 
 
 
@@ -47,8 +50,10 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/pos', function () {
         return view('pos.pos');
     });
+    
 
-    Route::post('/make_slaes', [SalesController::class, 'makeSales']);
+    Route::post('/make_sales', [SalesController::class, 'makeSales']);
+    Route::get('/purchasing', [SalesController::class, 'purchasingIndex']);
     Route::get('/today_sales/{id?}/{date?}', [SalesController::class, 'todaySales']);
 
     Route::group(['prefix' => 'item'], function () {

@@ -7,14 +7,26 @@
     <div class="row">
         <div class="col-12">
             <div class="row">
-                <div class="col-md-9">
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <div class="input-group">
+                            <span class="input-group-text py-1 px-2 bg-success fw-bold" id="basic-addon3">I want to</span>
+                            <select id="action" class="form-control py-1 px-1">
+                                <option value="sales">Make Sales</option>
+                                <option value="restock">Restock</option>
+                                {{-- <option value="Sales">Return</option> --}}
+                            </select>
+                        </div>                        
+                    </div>
+                </div>
+                <div class="col-md-8">
                     @include('pos.search')
                 </div>
 
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <div class="form-group">
                         <input type="text" id="customer" class="form-control py-1"
-                            placeholder="Enter customer name or phone number">
+                            placeholder="customer phone ">
                     </div>
                 </div>
             </div>
@@ -25,7 +37,7 @@
                     <form>
 
                         <div class="table-responsive">
-                            <table class="table table-sm " style="border: 0 !important" >
+                            <table class="table table-sm " style="border: 0 !important">
                                 <thead>
                                     <tr>
                                         <th>Item#</th>
@@ -42,10 +54,10 @@
                             </table>
                         </div>
 
-                        <div class="total_area" >
+                        <div class="total_area">
 
                         </div>
-                  
+
 
                     </form>
                 </div>
@@ -56,10 +68,12 @@
         <div>
             <div class="fixed-bottom" style="left: 250px;">
                 <div class=" p-3 d-flex justify-content-end ">
-                    <button class="btn btn-secondary me-2"><i class="fa fa-stop"></i> Put On Hold</button>
-                    <button class="btn btn-danger me-2"> <i class="fa fa-ban"></i> Cancel</button>
+                    <a href="/pos?trno={{ rand(111111, 3444444445409) }}" class="btn btn-secondary me-2"><i
+                            class="fa fa-stop"></i> Put On Hold</a>
+                    <button class="btn btn-danger clear_cart me-2" data-trno="{{ $_GET['trno'] }}"> <i
+                            class="fa fa-ban"></i> Cancel</button>
                     <button class="btn btn-success me-2"> <i class="fa fa-save"></i> Save Only</button>
-                    <button class="btn btn-primary"> <i class="fa fa-print"></i> Save and Print</button>
+                    <button class="btn btn-primary checkout"> <i class="fa fa-print"></i> Save and Print</button>
                 </div>
             </div>
         </div>
@@ -118,12 +132,11 @@
                         <tr>
                             <td># ${item.uuid}</td>
                             <td colspan="2" ><span class="fw-bold " >${item.name}</span></td>
-                            <td><span>0</span></td>
-                            <td><input type="number" class="cart_qty form-control px-2 me-2 py-1 p-0" min="1" value="${item.qty}" data-index=${item.uuid} style="width:60px"></td>
-                            <td><span>${item.price}</span></td>
+                            <td><span>${(item.quantity > 0) ? item.quantity : 0 }</span></td>
+                            <td><input type="number" class="cart_qty form-control px-2 me-2 py-0 p-0" min="1" value="${item.qty}" data-index=${item.uuid} style="width:60px"></td>
+                            <td><span>${money_format(item.price)}</span></td>
                             <td>
-                                    <span>${money_format(total)}</span>    
-                                 
+                                <span>${money_format(total)}</span>
                             </td>
                             <td>
                                 <div class="d-flex justify-content-end" >
@@ -133,15 +146,10 @@
                                 </div>      
                             </td>
                         </tr>
-
-                
-
                     `)
                 })
 
                 $('.total_area').html(`
-          
-
                     <div class="row sales_sum mt-2 bg-light px-2 py-3 ">
                         <div class="col-md-6 offset-md-6">
                             <div class="row  ">
@@ -227,6 +235,7 @@
             $('.checkout').on('click', function(e) {
                 e.preventDefault();
                 console.log(trno);
+                action = $('#action').val();
                 user = $('#customer').val();
                 advance = $('#advance').val();
 
@@ -236,15 +245,18 @@
 
                 btn = $(this);
 
+                end_point = (action == 'sales') ? '/make_sales' : '/admin/stock/restock';
+
                 $.ajax({
                     method: 'post',
-                    url: '/make_slaes',
+                    url: end_point,
                     data: {
                         '_token': `{{ csrf_token() }}`,
                         items: getItems(),
                         customer_phone: user,
                         sales_id: trno,
-                        advance: advance
+                        advance: advance,
+                        action: action
                     },
                     beforeSend: () => {
                         btn.html(`
@@ -262,29 +274,22 @@
                         }
                     }).showToast();
 
-                    btn.html(`Checkout`);
+                    btn.html(`<i class="fa fa-print"></i> Save and Print`);
                     $('.all_content').hide();
                     $('#customer').val('');
-
-                    // var strWindowFeatures =
-                    //     "location=yes,height=570,width=520,scrollbars=yes,status=yes";
-                    // loc = location.href
-                    // loc = loc.replace('/pos/index', `/pos/receipt.php?sales=${res.sales_id}`);
-                    // var URL = loc;
-                    // var win = window.open(URL, "_blank", strWindowFeatures);
-                    // window.open(URL, '_blank').focus();
-                    // printPage(URL)
-
-                    // setTimeout(() => {
-                    //     location.reload();
-                    // }, 3000);
-
                 }).fail(function(res) {
                     console.log(res);
-                    btn.html(`Checkout`)
+                    btn.html(`<i class="fa fa-print"></i> Save and Print`)
 
                 })
 
+            })
+
+
+            $('.clear_cart').on('click', function() {
+                trno = $(this).data('trno');
+                localStorage.removeItem(trno);
+                displayCart()
             })
 
 
@@ -297,7 +302,8 @@
                     id: item.id,
                     name: item.name,
                     price: item.price,
-                    qty: 1
+                    qty: 1,
+                    quantity: item.quantity
                 }
                 cart.push(arr);
                 $('.sbox').hide();
