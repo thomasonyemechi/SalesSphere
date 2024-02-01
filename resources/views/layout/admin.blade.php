@@ -60,8 +60,7 @@
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link text-white"
-                                        href="/admin/stock/restock?trno={{ rand(111111, 3444444445409) }}">Restock
-                                        Items</a>
+                                        href="#">Restock History</a>
                                 </li>
 
                                 <li class="nav-item">

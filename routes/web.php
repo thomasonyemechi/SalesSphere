@@ -73,6 +73,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth']], function () {
         Route::get('/dashboard', [AdminController::class, 'renderIndex']);
+        Route::get('/get_expense_graph_info', [AdminController::class, 'getExpenseGraphInfo']);
 
 
         Route::get('/add_staff', [StaffController::class, 'createStaffIndex']);

@@ -10,4 +10,10 @@ class Login extends Model
     use HasFactory;
 
     protected $guarded;
+
+
+    function staff()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 }
