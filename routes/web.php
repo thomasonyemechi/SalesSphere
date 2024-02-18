@@ -3,8 +3,10 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ExcelImportController;
 use App\Http\Controllers\ExpensesController;
 use App\Http\Controllers\ItemController;
+use App\Http\Controllers\PosController;
 use App\Http\Controllers\SalesController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\StockController;
@@ -31,6 +33,9 @@ Route::get('/load_product', [TestController::class, 'loadProduct']);
 
 
 Route::get('/login', function () {
+    if (auth()->user()) {
+        return redirect('/pos?trno='.rand(111111111,99999999999))->with('success', 'You are already logged in');
+    }
     return view('login');
 })->name('login');
 
@@ -41,16 +46,18 @@ Route::get('/get_hours', [StaffController::class, 'modifyHours']);
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/logout', [AuthController::class, 'logout']);
+Route::get('/receipt/{trno}', [PosController::class, 'printReceipt']);
 
 
 
 Route::group(['middleware' => ['auth']], function () {
 
 
+    Route::post('/upload-excel', [ExcelImportController::class, 'importItems']);
     Route::get('/pos', function () {
         return view('pos.pos');
-    });
-    
+    })->middleware('plus.trno');
+
 
     Route::post('/make_sales', [SalesController::class, 'makeSales']);
     Route::get('/purchasing', [SalesController::class, 'purchasingIndex']);
@@ -100,10 +107,5 @@ Route::group(['middleware' => ['auth']], function () {
             Route::get('/restock', [StockController::class, 'restockIndex']);
             Route::post('/restock', [StockController::class, 'restockItem']);
         });
-    
-   
-    
-
-        
     });
 });

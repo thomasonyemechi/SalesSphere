@@ -26,6 +26,7 @@
             background: linear-gradient(to right, #b04300, #ff0000) !important;
         }
     </style>
+    @laravelPWA
 
 </head>
 

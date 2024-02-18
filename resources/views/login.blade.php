@@ -7,6 +7,7 @@
 
     <link rel="stylesheet" href="assets/css/theme.min.css">
     <title>Sign in</title>
+    @laravelPWA
 </head>
 
 <body>

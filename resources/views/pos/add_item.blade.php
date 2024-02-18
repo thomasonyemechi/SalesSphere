@@ -20,7 +20,7 @@
                                             <span class="fs-6 text-uppercase fw-semi-bold">Items</span>
                                         </div>
                                     </div>
-                                    
+
                                 </div>
                             </div>
                         </div>
@@ -49,7 +49,7 @@
                                             <span class="fs-6 text-uppercase fw-semi-bold">No. Items</span>
                                         </div>
                                     </div>
-                                   
+
                                 </div>
                             </div>
                         </div>
@@ -64,7 +64,7 @@
                                             <span class="fs-6 text-uppercase fw-semi-bold">No. Items</span>
                                         </div>
                                     </div>
-                                   
+
                                 </div>
                             </div>
                         </div>
@@ -79,8 +79,12 @@
                                     <i class="fe fe-circle"> </i> Create Item Category
                                 </button>
 
-                                <button type="button" class="btn btn-secondary btn-sm py-2 btn-block">
+                                <button type="button" class="btn btn-secondary me-2 btn-sm py-2 btn-block">
                                     <i class="fe fe-eye"> </i> View all Categories
+                                </button>
+
+                                <button type="button" class="btn btn-info btn-sm open-uploadsheet py-2 btn-block">
+                                    <i class="fe fe-upload"> </i> Upload ExcelSheet
                                 </button>
 
                             </div>
@@ -99,6 +103,7 @@
                         <tr>
                             <th>item #</th>
                             <th>item Name</th>
+                            <th>Brand</th>
                             <th>Category</th>
                             <th>Description</th>
                             <th>Avail Qty</th>
@@ -114,9 +119,10 @@
                                 <td> <a href="javascript:;">
                                         <h4 class="fw-bold">{{ ucwords($item->name) }}</h4>
                                     </a> </td>
+                                <td> {{ $item->brand }} </td>
                                 <td> {{ $item->category->category }} </td>
                                 <td> {{ $item->description }} </td>
-                                <td> {{itemQty($item->id)}} </td>
+                                <td> {{ itemQty($item->id) }} </td>
                                 <td>{{ number_format($item->price) }} </td>
                                 <td>
                                     <div class="d-flex justify-content-end ">
@@ -195,6 +201,44 @@
             </div>
         </div>
     </div>
+
+
+    <div class="modal fade" id="uploadsheet" tabindex="-1" role="dialog" aria-labelledby="newCatgoryLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered ">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title fw-bold mb-0" id="newCatgoryLabel">
+                        Add Items From Excel File
+                    </h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true"><i class="fe fe-x-circle"></i></span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" class="row" action="/upload-excel" enctype="multipart/form-data">
+                        @csrf
+                        <div class="alert alert-warning">
+                            Select your excel file to upload and add items
+                            <br>
+                            <b>Note:</b> Items that already exists will be skipped and will not be added
+                        </div>
+                        <div class="col-lg-12 mb-2 ">
+                            <label class="form-label">File<span class="text-danger">*</span></label>
+                            <input type="file" name="file" class="form-control form-control-lg " required
+                                accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+                        </div>
+
+                        <div class="d-flex justify-content-end">
+                            <button type="submit" class="btn py-2 btn-primary">Save Item</button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="newCatgoryLabel"
         aria-hidden="true">
@@ -290,6 +334,10 @@
 
             $('.add_category').on('click', function() {
                 $('#add_category').modal('show');
+            })
+
+            $('.open-uploadsheet').on('click', function() {
+                $('#uploadsheet').modal('show');
             })
 
 

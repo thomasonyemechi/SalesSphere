@@ -3,6 +3,33 @@
     Point Of Sales
 @endsection
 
+<script type="text/javascript">
+    function closePrint() {
+        document.body.removeChild(this.__container__);
+    }
+
+    function setPrint() {
+        this.contentWindow.__container__ = this;
+        this.contentWindow.onbeforeunload = closePrint;
+        this.contentWindow.onafterprint = closePrint;
+        this.contentWindow.focus(); // Required for IE
+        this.contentWindow.print();
+    }
+
+    function printPage(sURL) {
+        var oHiddFrame = document.createElement("iframe");
+        oHiddFrame.onload = setPrint;
+        oHiddFrame.style.visibility = "hidden";
+        oHiddFrame.style.position = "fixed";
+        oHiddFrame.style.right = "0";
+        oHiddFrame.style.bottom = "0";
+        oHiddFrame.src = sURL;
+        document.body.appendChild(oHiddFrame);
+    }
+</script>
+
+
+
 @section('page_content')
     <div class="row">
         <div class="col-12">
@@ -16,7 +43,7 @@
                                 <option value="restock">Restock</option>
                                 {{-- <option value="Sales">Return</option> --}}
                             </select>
-                        </div>                        
+                        </div>
                     </div>
                 </div>
                 <div class="col-md-8">
@@ -25,8 +52,7 @@
 
                 <div class="col-md-2">
                     <div class="form-group">
-                        <input type="text" id="customer" class="form-control py-1"
-                            placeholder="customer phone ">
+                        <input type="text" id="customer" class="form-control py-1" placeholder="customer phone ">
                     </div>
                 </div>
             </div>
@@ -277,6 +303,25 @@
                     btn.html(`<i class="fa fa-print"></i> Save and Print`);
                     $('.all_content').hide();
                     $('#customer').val('');
+
+
+
+                    /////make print
+
+                    var strWindowFeatures =
+                        "location=yes,height=70,width=20,scrollbars=yes,status=yes";
+                    loc = location.href
+                    loc = loc.replace('/pos', `/receipt/${res.sales_id}`);
+                    var URL = loc;
+                    var win = window.open(URL, "_blank", strWindowFeatures);
+                    window.open(URL, '_blank').focus();
+                    printPage(URL)
+
+
+
+
+
+
                 }).fail(function(res) {
                     console.log(res);
                     btn.html(`<i class="fa fa-print"></i> Save and Print`)
@@ -296,7 +341,8 @@
             $(document).on('click', '.search_item', function() {
                 console.log(this);
                 item = $(this).data('data');
-                cart = (localStorage.getItem(trno) == null) ? [] : JSON.parse(localStorage.getItem(trno));
+                cart = (localStorage.getItem(trno) == null) ? [] : JSON.parse(localStorage.getItem(
+                    trno));
                 arr = {
                     uuid: Math.floor(Math.random() * 1000),
                     id: item.id,
@@ -311,6 +357,10 @@
                 localStorage.setItem(trno, JSON.stringify(cart));
                 displayCart();
             });
+
+
+
+
 
         })
     </script>
