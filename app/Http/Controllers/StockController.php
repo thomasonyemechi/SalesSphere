@@ -17,9 +17,40 @@ class StockController extends Controller
     }
 
 
+    function restockHistoryIndex(Request $request, $date='')
+    {
+        $date = isset($request->date) ? $request->date : '';
+        $day = ($date) ? date('Y-m-d', strtotime($date)) : date('Y-m-d');
+        $total_restock = RestockSummary::where('created_at', 'like', "%$day%")->count();
+        $amount = RestockSummary::where('created_at', 'like', "%$day%")->sum('total');
+        $restocks = RestockSummary::with(['restocks', 'supplier'])->where('created_at', 'like', "%$day%")->orderBy('id', 'desc')->paginate(25);
+
+        return view('admin.restock_history', compact(['day', 'total_restock', 'amount', 'restocks']));
+    }
+
+
+    function deleteRestock($restock_summary)
+    {
+
+        // return $restock_summary;
+
+        $restock_summary = RestockSummary::with(['restocks'])->find($restock_summary);
+        if ($restock_summary) {
+            foreach ($restock_summary->restocks as $restock) {
+                Stock::where(['action' => 'restock', 'summary_id' => $restock->id])->delete();
+                Restock::where('id', $restock->id)->delete();
+            }
+            $restock_summary->delete();
+        } 
+
+
+        return back()->with('success', 'Restock has been deleted and stock quantity has been updated');
+    }
+
+
     function restockItem(Request $request)
     {
- 
+
 
         $supplier_id = $this->updateOrCreateSupplier($request->customer_phone);
 

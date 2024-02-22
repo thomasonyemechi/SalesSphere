@@ -34,7 +34,7 @@ Route::get('/load_product', [TestController::class, 'loadProduct']);
 
 Route::get('/login', function () {
     if (auth()->user()) {
-        return redirect('/pos?trno='.rand(111111111,99999999999))->with('success', 'You are already logged in');
+        return redirect('/pos?trno=' . rand(111111111, 99999999999))->with('success', 'You are already logged in');
     }
     return view('login');
 })->name('login');
@@ -43,6 +43,7 @@ Route::get('/login', function () {
 Route::get('/items', [ItemController::class, 'getItems']);
 Route::get('/search', [ItemController::class, 'searchItem']);
 Route::get('/get_hours', [StaffController::class, 'modifyHours']);
+Route::post('/search_product', [ItemController::class, 'productSearch']);
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/logout', [AuthController::class, 'logout']);
@@ -54,12 +55,12 @@ Route::group(['middleware' => ['auth']], function () {
 
 
     Route::post('/upload-excel', [ExcelImportController::class, 'importItems']);
-    Route::get('/pos', function () {
-        return view('pos.pos');
-    })->middleware('plus.trno');
+    Route::get('/pos', [PosController::class, 'posIndex']);
+    Route::get('/get_sales/{sales_id}', [PosController::class, 'getSales']);
 
 
     Route::post('/make_sales', [SalesController::class, 'makeSales']);
+    Route::post('/return_items', [SalesController::class, 'returnItem']);
     Route::get('/purchasing', [SalesController::class, 'purchasingIndex']);
     Route::get('/today_sales/{id?}/{date?}', [SalesController::class, 'todaySales']);
 
@@ -105,7 +106,11 @@ Route::group(['middleware' => ['auth']], function () {
 
         Route::group(['prefix' => 'stock'], function () {
             Route::get('/restock', [StockController::class, 'restockIndex']);
+            Route::get('/delete/{restock_summary}', [StockController::class, 'deleteRestock']);
             Route::post('/restock', [StockController::class, 'restockItem']);
         });
+
+
+        Route::get('/restock-history/{date?}', [StockController::class, 'restockHistoryIndex']);
     });
 });

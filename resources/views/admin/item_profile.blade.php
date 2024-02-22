@@ -43,30 +43,43 @@
                     </div>
 
                     <div class="card-body">
-                        <div class="text-center" >
+                        <div class="text-center">
                             <img src="{{ Avatar::create($item->name)->toBase64() }}" />
-                            <h2 class="fw-bold mt-2" > {{$item->name}} </h2>
+                            <h2 class="fw-bold mt-2"> {{ $item->name }} </h2>
                         </div>
-                 
+
                         <div class="d-flex justify-content-between border-bottom py-2">
                             <span>Pricing</span>
                             <span class="text-warning">
-                                {{money($item->price)}}
+                                {{ money($item->price) }}
                             </span>
                         </div>
                         <div class="d-flex justify-content-between border-bottom py-2">
                             <span>Product Code</span>
                             <span>
-                                
+
                             </span>
                         </div>
                         <div class="d-flex justify-content-between border-bottom py-2">
                             <span>Description</span>
                             <span>
-                                {{$item->description}}
+                                {{ $item->description }}
+                            </span>
+                        </div>
+                        <div class="d-flex justify-content-between border-bottom py-2">
+                            <span>Created Date</span>
+                            <span>
+                                {{ $item->created_at }}
                             </span>
                         </div>
                     </div>
+                </div>
+
+
+                <div class=" mt-4 ">
+                    <button class="btn btn-danger " style="width: 100%">
+                        <i class="fa fa-trash me-2"></i> Delete {{ $item->name }}
+                    </button>
                 </div>
             </div>
             <div class="col-md-4">
@@ -76,96 +89,125 @@
                         <div class="d-flex justify-content-between border-bottom py-2">
                             <span>Current Stock</span>
                             <span class="text-warning">
-                                {{money($item->price)}}
+                                {{ money($item->price * $item->quantity) }}
                             </span>
                         </div>
                         <div class="d-flex justify-content-between border-bottom py-2">
                             <span>Restock Quantity</span>
                             <span>
-                                
+                                {{ number_format($item->quantity) }}
+                            </span>
+                        </div>
+                        <div class="d-flex justify-content-between border-bottom py-2">
+                            <span>Bigest Sale</span>
+                            <span>
+                                {{-- {{ App\Models }} --}}
+                            </span>
+                        </div>
+
+                        <div class="d-flex justify-content-between border-bottom py-2">
+                            <span>Total Sales</span>
+                            <span class="fw-bold">
+                                {{ money(App\Models\Sales::where(['item_id' => $item->id])->sum('price')) }}
+                                |
+                                {{ number_format(App\Models\Sales::where(['item_id' => $item->id])->sum('quantity')) }} pcs
+                            </span>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between border-bottom py-2">
+                            <span>Restock Summary</span>
+                            <span class="fw-bold">
+                                {{ number_format(App\Models\Restock::where(['item_id' => $item->id])->sum('quantity')) }} pcs
                             </span>
                         </div>
                     </div>
                 </div>
 
-                <div class="card mt-3">
-                    <div class="card-body">
-                        <h5 class=" fw-bold ">Recent Suppliers Details</h5>
-
-                        <table class="table table-sm mt-3 p-0 " >
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Contact</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
 
                 <div class="card mt-3">
                     <div class="card-body">
-                        <h5 class="mb-0">Product Catrgory</h5>
-                        <h3 class="fw-bold mb-0 mt-0" > {{$item->category->category}} </h3>
+                        <div class="d-flex justify-content-between ">
+                            <div>
+                                <h5 class="mb-0">Product Catrgory</h5>
+                                <h3 class="fw-bold mb-0 mt-0"> {{ $item->category->category }} </h3>
+                            </div>
+                            <div>
+                                <h5 class="mb-0">Brand </h5>
+                                <h3 class="fw-bold mb-0 mt-0"> {{ $item->brand }} </h3>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <div class="col-md-4">
-                <div class="card" >
-                    <div class="card-body" >
-                        <h5 class="fw-bold">Recent Sales</h5>
-                        <table class="table table-sm mt-2 p-0 " >
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex  justify-content-between ">
+                            <h5 class="fw-bold">Recent Sales</h5>
+                            <a href="/admin/stock/sales/{{ $item->id }}" class="align-middle">See All</a>
+                        </div>
+                        <table class="table table-sm mt-2 p-0 ">
                             <thead>
                                 <tr>
                                     <th>Qty</th>
                                     <th>Total</th>
                                     <th>Date</th>
+                                    <td></td>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
+                                @foreach ($recent_sales as $sale)
+                                    <tr>
+                                        <td> {{ $sale->quantity }} </td>
+                                        <td> {{ money($sale->price) }} </td>
+                                        <td> {{ $sale->created_at }} </td>
+                                        <td>
+                                            <a href="" class="text-danger"> <i class="fa fa-trash "></i> </a>
+                                        </td>
+                                    </tr>
+                                @endforeach
                             </tbody>
                         </table>
                     </div>
                 </div>
 
-                <div class="card mt-3" >
-                    <div class="card-body" >
-                        <h5 class="fw-bold ">Restock History</h5>
-                        <table class="table table-sm mt-2 p-0 " >
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <div class="d-flex  justify-content-between ">
+                            <h5 class="fw-bold">Restock History</h5>
+                            <a href="/admin/stock/restock/{{ $item->id }}" class="align-middle">See All</a>
+                        </div>
+                        <table class="table table-sm mt-2 p-0 ">
                             <thead>
                                 <tr>
                                     <th>Qty</th>
                                     <th>Total</th>
                                     <th>Date</th>
+                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody>
+                                @foreach ($restock_histories as $restock)
                                 <tr>
-                                    <td></td>
-                                    <td></td>
+                                    <td> {{ $restock->quantity }} </td>
+                                    <td> {{ money($restock->price * $restock->quantity) }} </td>
+                                    <td> {{ $restock->created_at }} </td>
+                                    <td>
+                                        <a href="" class="text-danger"> <i class="fa fa-trash "></i> </a>
+                                    </td>
                                 </tr>
+                            @endforeach
                             </tbody>
                         </table>
                     </div>
                 </div>
 
-
-                <div class="card mt-3" >
-                    <div class="card-body" >
+{{-- 
+                <div class="card mt-3">
+                    <div class="card-body">
                         <h5 class="fw-bold ">Returns </h5>
-                        <table class="table table-sm mt-2 p-0 " >
+                        <table class="table table-sm mt-2 p-0 ">
                             <thead>
                                 <tr>
                                     <th>Qty</th>
@@ -181,7 +223,7 @@
                             </tbody>
                         </table>
                     </div>
-                </div>
+                </div> --}}
 
             </div>
         </div>

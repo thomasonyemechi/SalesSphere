@@ -41,7 +41,7 @@
                             <select id="action" class="form-control py-1 px-1">
                                 <option value="sales">Make Sales</option>
                                 <option value="restock">Restock</option>
-                                {{-- <option value="Sales">Return</option> --}}
+                                <option value="return">Return</option>
                             </select>
                         </div>
                     </div>
@@ -58,6 +58,13 @@
             </div>
         </div>
         <div class="col-md-12">
+
+            @if (isset($_GET['action']))
+                <div class="alert mt-3 alert-warning">
+                    You are editing a closed sale
+                </div>
+            @endif
+
             <div class="card mt-3  all_content " style="min-height: 70vh">
                 <div class="card-body p-3 ">
                     <form>
@@ -98,7 +105,7 @@
                             class="fa fa-stop"></i> Put On Hold</a>
                     <button class="btn btn-danger clear_cart me-2" data-trno="{{ $_GET['trno'] }}"> <i
                             class="fa fa-ban"></i> Cancel</button>
-                    <button class="btn btn-success me-2"> <i class="fa fa-save"></i> Save Only</button>
+                    <button class="btn btn-success checkout-only me-2"> <i class="fa fa-save"></i> Save Only</button>
                     <button class="btn btn-primary checkout"> <i class="fa fa-print"></i> Save and Print</button>
                 </div>
             </div>
@@ -110,6 +117,8 @@
 @push('scripts')
     <script>
         $(function() {
+
+
             function trno() {
                 return Math.floor(Math.random() * 10000000000000000);
             }
@@ -258,9 +267,11 @@
                 $('#balance').val(tot - parseInt(adv))
             })
 
-            $('.checkout').on('click', function(e) {
-                e.preventDefault();
-                console.log(trno);
+
+
+
+
+            function checMeJusOut(btn, print) {
                 action = $('#action').val();
                 user = $('#customer').val();
                 advance = $('#advance').val();
@@ -269,9 +280,21 @@
                     user = 09000000000
                 }
 
-                btn = $(this);
 
-                end_point = (action == 'sales') ? '/make_sales' : '/admin/stock/restock';
+                end_point = ''
+
+                if(action == 'sales') {
+                    end_point = '/make_sales'
+                }else if(action == 'return'){
+                    end_point = '/return_items'
+                }else {
+                    end_point = '/admin/stock/restock'
+                }
+
+                btn_html = btn.html();
+
+                summary_id = `{{ $sales_id }}`;
+                console.log(summary_id);
 
                 $.ajax({
                     method: 'post',
@@ -282,7 +305,8 @@
                         customer_phone: user,
                         sales_id: trno,
                         advance: advance,
-                        action: action
+                        action: action,
+                        delete_id: summary_id
                     },
                     beforeSend: () => {
                         btn.html(`
@@ -300,34 +324,45 @@
                         }
                     }).showToast();
 
-                    btn.html(`<i class="fa fa-print"></i> Save and Print`);
+                    btn.html(`${btn_html}`);
                     $('.all_content').hide();
                     $('#customer').val('');
 
+                    if (action == 'sales' && print == 'print') {
+                        var strWindowFeatures =
+                            "location=yes,height=70,width=20,scrollbars=yes,status=yes";
+                        loc = location.href
+                        loc = loc.replace('/pos', `/receipt/${res.sales_id}`);
+                        var URL = loc;
+                        var win = window.open(URL, "_blank", strWindowFeatures);
+                        window.open(URL, '_blank');
+                        // printPage(URL)
+                    }
 
-
-                    /////make print
-
-                    var strWindowFeatures =
-                        "location=yes,height=70,width=20,scrollbars=yes,status=yes";
-                    loc = location.href
-                    loc = loc.replace('/pos', `/receipt/${res.sales_id}`);
-                    var URL = loc;
-                    var win = window.open(URL, "_blank", strWindowFeatures);
-                    window.open(URL, '_blank').focus();
-                    printPage(URL)
-
-
-
+                    if (summary_id > 0) {
+                        window.location.href = `/pos?trno=${trno}`
+                    }
 
 
 
                 }).fail(function(res) {
                     console.log(res);
-                    btn.html(`<i class="fa fa-print"></i> Save and Print`)
+                    btn.html(`${btn_html}`)
 
                 })
+            }
 
+            $('.checkout').on('click', function(e) {
+                e.preventDefault();
+                console.log(trno);
+                btn = $(this)
+                checMeJusOut(btn, 'print');
+            })
+
+            $('.checkout-only').on('click', function(e) {
+                e.preventDefault();
+                btn = $(this)
+                checMeJusOut(btn, 'no-print');
             })
 
 
@@ -354,9 +389,56 @@
                 cart.push(arr);
                 $('.sbox').hide();
                 $('#search').val(``);
+                $('#search').removeAttr('autofocus');
+                $('#search').attr('autofocus', 'autofocus');
                 localStorage.setItem(trno, JSON.stringify(cart));
                 displayCart();
             });
+
+
+
+
+            function getSaleAndPutToSession(sales_id) {
+
+                if (sales_id == 0) {
+                    return;
+                }
+
+
+                console.log(sales_id);
+
+                $.ajax({
+                    method: 'get',
+                    url: `/get_sales/${sales_id}`
+                }).done(function(res) {
+                    console.log(res);
+
+
+                    cart = [];
+
+                    res.sales.forEach(sale => {
+                        arr = {
+                            uuid: Math.floor(Math.random() * 1000),
+                            id: sale.id,
+                            name: sale.item.name,
+                            price: sale.price,
+                            qty: sale.quantity,
+                            quantity: sale.item.stock_qty
+                        }
+                        cart.push(arr);
+                    });
+                    localStorage.setItem(trno, JSON.stringify(cart));
+
+                    displayCart();
+
+                }).fail(function(res) {
+                    console.log(res);
+                })
+            }
+
+            let sales_id = `{{ $sales_id }}`
+            getSaleAndPutToSession(sales_id);
+
 
 
 

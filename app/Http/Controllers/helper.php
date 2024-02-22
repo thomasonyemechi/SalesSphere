@@ -10,7 +10,7 @@ function def()
 
 function money($money)
 {
-    return '$ ' . number_format($money);
+    return '₦ ' . number_format($money);
 }
 
 function itemQty($id)

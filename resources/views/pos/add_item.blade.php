@@ -98,6 +98,15 @@
 
         <div class="col-lg-12 col-md-12 col-12">
             <div class="card p-3 mt-3">
+
+                <div class="">
+                    <div class="">
+                        <form action="/search_product" method="POST">@csrf
+                            <input type="search" name="search_product" class="form-control mb-3 shadow"
+                                placeholder="Enter Item name and click enter" id="">
+                        </form>
+                    </div>
+                </div>
                 <table class="table table-sm">
                     <thead>
                         <tr>
@@ -168,10 +177,15 @@
                         <div class="alert alert-warning">
                             Fill the form below to add new item
                         </div>
-                        <div class="col-lg-12 mb-2 ">
+                        <div class="col-lg-8 mb-2 ">
                             <label class="form-label">Item Name<span class="text-danger">*</span></label>
                             <input type="text" name="name" class="form-control py-1" placeholder="Item Name" required
                                 autocomplete="zpo">
+                        </div>
+                        <div class="col-lg-4 mb-2 ">
+                            <label class="form-label">Brand <span class="text-danger">*</span></label>
+                            <input type="text" name="brand" class="form-control py-1" placeholder="Brand name"
+                                required autocomplete="zpo">
                         </div>
                         <div class="col-lg-6 mb-2 ">
                             <label class="form-label">Category<span class="text-danger">*</span></label>
@@ -184,8 +198,8 @@
 
                         <div class="col-lg-6 ">
                             <label class="form-label">Price<span class="text-danger">*</span></label>
-                            <input type="number" name="price" class="form-control py-1" placeholder="Enter Item Price"
-                                required>
+                            <input type="number" name="price" class="form-control py-1"
+                                placeholder="Enter Item Price" required>
                         </div>
 
                         <div class="col-lg-12 mb-3 mb-3 mt-2">
@@ -254,11 +268,16 @@
                 </div>
                 <div class="modal-body">
                     <form method="POST" action="/item/update" class="row">@csrf
-                        <div class="col-lg-12 mb-2 ">
+                        <div class="col-lg-8 mb-2 ">
                             <label class="form-label">Item Name<span class="text-danger">*</span></label>
                             <input type="text" name="name" class="form-control py-1" placeholder="Item Name"
                                 required>
                             <input type="hidden" name="id">
+                        </div>
+                        <div class="col-lg-4 mb-2 ">
+                            <label class="form-label">Brand <span class="text-danger">*</span></label>
+                            <input type="text" name="brand" class="form-control py-1" placeholder="Brand name"
+                                required autocomplete="zpo">
                         </div>
                         <div class="col-lg-6 ">
                             <label class="form-label">Price<span class="text-danger">*</span></label>
@@ -349,6 +368,7 @@
                 form = modal.find('form');
                 form.find('input[name="id"]').val(`${data.id}`)
                 form.find('input[name="name"]').val(`${data.name}`)
+                form.find('input[name="brand"]').val(`${data.brand}`)
                 form.find('input[name="price"]').val(`${data.price}`)
                 form.find('select[name="category_id"]').val(`${data.category_id}`);
                 form.find('textarea[name="description"]').html(`${data.description}`)

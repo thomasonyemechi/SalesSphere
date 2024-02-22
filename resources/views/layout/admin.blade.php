@@ -60,13 +60,8 @@
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link text-white"
-                                        href="#">Restock History</a>
+                                        href="/admin/restock-history">Restock History</a>
                                 </li>
-
-                                <li class="nav-item">
-                                    <a class="nav-link text-white" href="/admin/stock/history">History</a>
-                                </li>
-
 
                             </ul>
                         </div>
