@@ -30,12 +30,22 @@ class ItemController extends Controller
         return view('pos.add_item', compact(['items', 'categories']));
     }
 
+    function clean_str($str)
+    {
+      if($str){
+        $cleanStr = preg_replace('/[^A-Za-z0-9 ]/', '', $str);
+        return $cleanStr;
+      }
+    }
+
 
     function searchItem(Request $request)
     {
-        $items = Item::where('name', 'like', "%$request->s%")->limit(20)->get(['name', 'price', 'id']);
+        $items = Item::where('name', 'like', "%$request->s%")->limit(20)->get(['name', 'price', 'brand', 'id']);
         foreach ($items as $item) {
             $item['quantity'] = itemQty($item->id);
+            $item->name = $this->clean_str($item->name);
+            $item->brand = $this->clean_str($item->brand);
         }
         return response($items);
     }

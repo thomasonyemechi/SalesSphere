@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Item;
 use App\Models\Restock;
 use App\Models\RestockSummary;
 use App\Models\Stock;
@@ -58,7 +59,8 @@ class StockController extends Controller
         $summary = RestockSummary::create([
             'supplier_id' => $supplier_id,
             'total' => 0,
-            'amount_paid' => 0
+            'amount_paid' => 0,
+            'payment_mode' => $request->mode
         ]);
 
 
@@ -79,6 +81,13 @@ class StockController extends Controller
                 'quantity' => $qty,
                 'price' => $price
             ]);
+
+
+
+            Item::where('id', $item_id)->update([
+                'price' => $price
+            ]);
+
 
 
             Stock::create([

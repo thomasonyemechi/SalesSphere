@@ -9,4 +9,9 @@ class ItemReturn extends Model
 {
     use HasFactory;
     protected $guarded;
+
+    function item()
+    {
+        return $this->belongsTo(Item::class);
+    }
 }

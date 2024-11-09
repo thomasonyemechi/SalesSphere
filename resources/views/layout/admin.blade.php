@@ -69,7 +69,7 @@
 
 
                     
-                    <li class="nav-item bg-info mb-3">
+                    {{-- <li class="nav-item bg-info mb-3">
                         <a class="nav-link text-white p-3 " href="#" >
                             <i class="nav-icon fe fe-circle me-2"></i> 
                             Out of stock items
@@ -86,7 +86,7 @@
                     </li>
 
 
-
+ --}}
 
                     <li class="nav-item mb-3 bg-info ">
                         <a class="nav-link  collapsed text-white p-3 " href="#!" data-bs-toggle="collapse"
@@ -130,6 +130,13 @@
                     </li>
 
 
+                    {{-- <li class="nav-item bg-info mb-3">
+                        <a class="nav-link text-white p-3 ">
+                            <i class="nav-icon fe fe-lock me-2"></i> Today Sales Report
+                        </a>
+                    </li>
+
+ --}}
 
                     
                     <li class="nav-item mb-3 bg-info ">

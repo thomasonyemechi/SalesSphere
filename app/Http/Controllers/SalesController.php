@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Client;
+use App\Models\Item;
 use App\Models\ItemReturn;
 use App\Models\returnSummary;
 use App\Models\Sales;
@@ -23,7 +24,8 @@ class SalesController extends StockController
         $summary = SalesSummary::create([
             'customer_id' => $customer_id,
             'total' => 0,
-            'user_id' => auth()->user()->id
+            'user_id' => auth()->user()->id,
+            'payment_mode' => $request->mode
         ]);
 
 
@@ -56,6 +58,11 @@ class SalesController extends StockController
                 'summary_id' => $summary->id,
                 'item_id' => $item_id,
                 'quantity' => $qty,
+                'price' => $price
+            ]);
+
+            // updatePrice =
+            Item::where('id', $item_id)->update([
                 'price' => $price
             ]);
 
@@ -108,9 +115,9 @@ class SalesController extends StockController
         $total_sales = SalesSummary::where(['user_id' => $id])->where('created_at', 'like', "%$day%")->count();
         $amount = SalesSummary::where(['user_id' => $id])->where('created_at', 'like', "%$day%")->sum('total');
         $sales = SalesSummary::with(['sales', 'customer'])->where('created_at', 'like', "%$day%")->orderBy('id', 'desc')->paginate(25);
-        $returns = returnSummary::with(['sales', 'customer'])->where('created_at', 'like', "%$day%")->orderBy('id', 'desc')->paginate(25);
+        $returns = returnSummary::with(['returns'])->where('created_at', 'like', "%$day%")->orderBy('id', 'desc')->paginate(25);
 
-        return view('pos.today_sales', compact(['total_sales', 'amount', 'sales', 'day']));
+        return view('pos.today_sales', compact(['total_sales', 'amount', 'sales', 'day', 'returns']));
     }
 
 

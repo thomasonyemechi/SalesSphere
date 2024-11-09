@@ -37,13 +37,20 @@ class AdminController extends Controller
         $clients = Client::count();
         $suppliers = Supplier::count();
 
-        $sales_history = SalesSummary::with(['sales'])->orderby('id','desc')->limit(10)->get();
+        $sales_history = SalesSummary::with(['sales'])->orderby('id','desc')->limit(15)->get();
         $logins = Login::with(['staff:id,name'])->orderby('id', 'desc')->limit(10)->get();
 
         return view('admin.index', compact([
             'expense_total', 'first_day', 'last_day', 'restock_total', 'restock_count', 'sales_history',
             'sales_total', 'sales_count', 'expense_categories', 'clients', 'suppliers', 'mth', 'logins',
         ]));
+    }
+
+
+    function todaySalesIndex(Request $request)
+    {
+        // $sales = Sales
+        return view('admin.today_sales');
     }
 
 

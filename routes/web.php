@@ -100,6 +100,7 @@ Route::group(['middleware' => ['auth']], function () {
 
 
         Route::get('/staff/{id}', [StaffController::class, 'staffProfileIndex']);
+        Route::get('/today-sales', [AdminController::class, 'todaySalesIndex']);
 
 
 

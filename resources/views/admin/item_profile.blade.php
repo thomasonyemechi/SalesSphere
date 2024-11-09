@@ -39,7 +39,7 @@
                 <div class="card">
                     <div class="card-header d-flex justify-content-between  ">
                         <h5 class="mb-0 fw-bold ">General Item Details</h5>
-                        <button class="btn btn-primary py-0">Update Info</button>
+                        <button class="btn btn-primary py-0" style="font-size: 25px">Update Info</button>
                     </div>
 
                     <div class="card-body">
@@ -84,43 +84,7 @@
             </div>
             <div class="col-md-4">
                 <div class="card">
-                    <div class="card-body">
-                        <h5 class=" fw-bold ">Inventory Details</h5>
-                        <div class="d-flex justify-content-between border-bottom py-2">
-                            <span>Current Stock</span>
-                            <span class="text-warning">
-                                {{ money($item->price * $item->quantity) }}
-                            </span>
-                        </div>
-                        <div class="d-flex justify-content-between border-bottom py-2">
-                            <span>Restock Quantity</span>
-                            <span>
-                                {{ number_format($item->quantity) }}
-                            </span>
-                        </div>
-                        <div class="d-flex justify-content-between border-bottom py-2">
-                            <span>Bigest Sale</span>
-                            <span>
-                                {{-- {{ App\Models }} --}}
-                            </span>
-                        </div>
-
-                        <div class="d-flex justify-content-between border-bottom py-2">
-                            <span>Total Sales</span>
-                            <span class="fw-bold">
-                                {{ money(App\Models\Sales::where(['item_id' => $item->id])->sum('price')) }}
-                                |
-                                {{ number_format(App\Models\Sales::where(['item_id' => $item->id])->sum('quantity')) }} pcs
-                            </span>
-                        </div>
-                        
-                        <div class="d-flex justify-content-between border-bottom py-2">
-                            <span>Restock Summary</span>
-                            <span class="fw-bold">
-                                {{ number_format(App\Models\Restock::where(['item_id' => $item->id])->sum('quantity')) }} pcs
-                            </span>
-                        </div>
-                    </div>
+                    login
                 </div>
 
 

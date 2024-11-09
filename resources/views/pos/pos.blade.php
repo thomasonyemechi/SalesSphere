@@ -40,7 +40,9 @@
                             <span class="input-group-text py-1 px-2 bg-success fw-bold" id="basic-addon3">I want to</span>
                             <select id="action" class="form-control py-1 px-1">
                                 <option value="sales">Make Sales</option>
-                                <option value="restock">Restock</option>
+                                @if (auth()->user()->role == 'administrator')
+                                    <option value="restock">Restock</option>
+                                @endif
                                 <option value="return">Return</option>
                             </select>
                         </div>
@@ -101,6 +103,11 @@
         <div>
             <div class="fixed-bottom" style="left: 250px;">
                 <div class=" p-3 d-flex justify-content-end ">
+                    <select class="form-control me-3" style="width: 100px" name="payment_mode" id="payment_mode">
+                        <option>cash</option>
+                        <option>pos</option>
+                        <option>transfer</option>
+                    </select>
                     <a href="/pos?trno={{ rand(111111, 3444444445409) }}" class="btn btn-secondary me-2"><i
                             class="fa fa-stop"></i> Put On Hold</a>
                     <button class="btn btn-danger clear_cart me-2" data-trno="{{ $_GET['trno'] }}"> <i
@@ -169,7 +176,9 @@
                             <td colspan="2" ><span class="fw-bold " >${item.name}</span></td>
                             <td><span>${(item.quantity > 0) ? item.quantity : 0 }</span></td>
                             <td><input type="number" class="cart_qty form-control px-2 me-2 py-0 p-0" min="1" value="${item.qty}" data-index=${item.uuid} style="width:60px"></td>
-                            <td><span>${money_format(item.price)}</span></td>
+                            <td>
+                                <input type="number" class="cart_price form-control px-2 me-2 py-0 p-0" min="1" value="${item.price}" data-index=${item.uuid} style="width:80px">
+                            </td>
                             <td>
                                 <span>${money_format(total)}</span>
                             </td>
@@ -275,6 +284,7 @@
                 action = $('#action').val();
                 user = $('#customer').val();
                 advance = $('#advance').val();
+                mode = $('#payment_mode').val();
 
                 if (!user) {
                     user = 09000000000
@@ -283,11 +293,11 @@
 
                 end_point = ''
 
-                if(action == 'sales') {
+                if (action == 'sales') {
                     end_point = '/make_sales'
-                }else if(action == 'return'){
+                } else if (action == 'return') {
                     end_point = '/return_items'
-                }else {
+                } else {
                     end_point = '/admin/stock/restock'
                 }
 
@@ -305,6 +315,7 @@
                         customer_phone: user,
                         sales_id: trno,
                         advance: advance,
+                        mode: mode,
                         action: action,
                         delete_id: summary_id
                     },
@@ -381,7 +392,7 @@
                 arr = {
                     uuid: Math.floor(Math.random() * 1000),
                     id: item.id,
-                    name: item.name,
+                    name: `${item.name} (${item.brand})`,
                     price: item.price,
                     qty: 1,
                     quantity: item.quantity

@@ -17,4 +17,3 @@ function itemQty($id)
 {
     return Stock::where(['item_id' => $id])->sum('quantity');
 }
-

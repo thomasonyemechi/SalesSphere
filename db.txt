@@ -1,0 +1,4 @@
+ALTER TABLE `sales_summaries` ADD `payment_mode` VARCHAR(20) NOT NULL DEFAULT 'cash' AFTER `customer_id`;
+
+
+ALTER TABLE `restock_summaries` ADD `payment_mode` VARCHAR(20) NOT NULL DEFAULT 'cash' AFTER `amount_paid`;

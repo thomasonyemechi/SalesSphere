@@ -10,4 +10,9 @@ class returnSummary extends Model
     use HasFactory;
 
     protected $guarded;
+
+    function returns()
+    {
+        return $this->hasMany(ItemReturn::class, 'summary_id');
+    }
 }

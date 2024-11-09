@@ -77,7 +77,7 @@
             }
 
 
-
+ 
 
             $("#search").on('keyup', function(e) {
                 e.preventDefault()
@@ -118,7 +118,7 @@
                         return;
                     }
 
-               
+
 
 
                     string = '';
@@ -128,7 +128,7 @@
                             <tr class=" search_item ${(item.quantity > 0) ? ` ` : `bg-danger text-white`} " data-data='${JSON.stringify(item)}' style="cursor: pointer" >
                                 <td>#${item.id}</td>
                                 <td>         
-                                    <span class="fw-bold"> ${item.name} </span> 
+                                    <span class="fw-bold"> ${item.name} (${item.brand}) </span> 
                                 </td>
                                 <td>${money_format(item.price)}</td>
                                 <td> ${(item.quantity > 0) ? item.quantity : `Out of Stock`} </td>
