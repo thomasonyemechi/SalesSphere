@@ -117,6 +117,9 @@ class SalesController extends StockController
         $sales = SalesSummary::with(['sales', 'customer'])->where('created_at', 'like', "%$day%")->orderBy('id', 'desc')->paginate(25);
         $returns = returnSummary::with(['returns'])->where('created_at', 'like', "%$day%")->orderBy('id', 'desc')->paginate(25);
 
+
+        // $ = SalesSummary::where"SELECT * FROM sales WHERE (date_sold BETWEEN '$date_start' AND '$date_end' ) AND customer_id = '$customer_id' ORDER BY id DESC";
+
         return view('pos.today_sales', compact(['total_sales', 'amount', 'sales', 'day', 'returns']));
     }
 

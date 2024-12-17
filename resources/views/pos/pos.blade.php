@@ -29,15 +29,26 @@
 </script>
 
 
+<style>
+    .bg-enoget {
+        color: red;
+    }
+
+    
+
+</style>
+
 
 @section('page_content')
     <div class="row">
-        <div class="col-12">
-            <div class="row">
-                <div class="col-md-2">
+        <div class="col-md-5">
+
+            <div style="position: ; width: auto !important; ">
+                <div class="col-md-4">
                     <div class="form-group">
                         <div class="input-group">
-                            <span class="input-group-text py-1 px-2 bg-success fw-bold" id="basic-addon3">I want to</span>
+                            <span class="input-group-text py-1 px-2 bg-success fw-bold" id="basic-addon3">I want
+                                to</span>
                             <select id="action" class="form-control py-1 px-1">
                                 <option value="sales">Make Sales</option>
                                 @if (auth()->user()->role == 'administrator')
@@ -48,18 +59,60 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-8">
-                    @include('pos.search')
-                </div>
 
-                <div class="col-md-2">
-                    <div class="form-group">
-                        <input type="text" id="customer" class="form-control py-1" placeholder="customer phone ">
+
+                <div class="card mt-3   " style="overflow-y: scroll; height: 80vh;">
+                    <div class="card-body">
+                        <span class="fw-bold">Search For item</span>
+                        @include('pos.search')
+
+
+                        <div class="sbox  mt-3 " style="width: 100%">
+
+                        </div>
+
+
+
+                        <div class="mt-3">
+                            <span class="fw-bold mb-3"> Recent Items</span>
+                            <div class="table-responsive">
+                                <table class="table table-striped table-sm ">
+                                    <tr>
+                                        <td>Item Name</td>
+                                        <td>Cost Price </td>
+                                        <td>Price</td>
+                                        <td>Qty</td>
+                                        <tbody>
+                                            @foreach ($items as $item)
+                                                <tr class=" search_item {{ $item->quantity > 0 ? '' : 'bg-enoget' }}"
+                                                    data-data='{{ json_encode($item) }}' style="cursor: pointer">
+                                                    <td> <span class="fw-bold"> {{ ucfirst($item->name) }} </span>
+                                                    </td>
+                                                    <td> {{ money($item->cost_price) }} </td>
+                                                    <td> {{ money($item->price) }} </td>
+                                                    <td> {{ $item->quantity > 0 ? number_format($item->quantity) : 0 }}
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </tr>
+                                </table>
+                            </div>
+
+                        </div>
+
                     </div>
                 </div>
             </div>
+
+
         </div>
-        <div class="col-md-12">
+        <div class="col-md-7">
+            <div class="d-flex  justify-content-end ">
+                <div class="form-group">
+                    <input type="text" id="customer" class="form-control py-1" placeholder="customer phone ">
+                </div>
+            </div>
 
             @if (isset($_GET['action']))
                 <div class="alert mt-3 alert-warning">
@@ -69,6 +122,7 @@
 
             <div class="card mt-3  all_content " style="min-height: 70vh">
                 <div class="card-body p-3 ">
+                    <h4 class="">Cart Items</h4>
                     <form>
 
                         <div class="table-responsive">
@@ -100,21 +154,25 @@
 
 
         </div>
-        <div>
-            <div class="fixed-bottom" style="left: 250px;">
-                <div class=" p-3 d-flex justify-content-end ">
-                    <select class="form-control me-3" style="width: 100px" name="payment_mode" id="payment_mode">
-                        <option>cash</option>
-                        <option>pos</option>
-                        <option>transfer</option>
-                    </select>
-                    <a href="/pos?trno={{ rand(111111, 3444444445409) }}" class="btn btn-secondary me-2"><i
-                            class="fa fa-stop"></i> Put On Hold</a>
-                    <button class="btn btn-danger clear_cart me-2" data-trno="{{ $_GET['trno'] }}"> <i
-                            class="fa fa-ban"></i> Cancel</button>
-                    <button class="btn btn-success checkout-only me-2"> <i class="fa fa-save"></i> Save Only</button>
-                    <button class="btn btn-primary checkout"> <i class="fa fa-print"></i> Save and Print</button>
-                </div>
+    </div>
+
+
+
+
+    <div>
+        <div class="fixed-bottom" style="left: 250px;">
+            <div class=" p-3 d-flex justify-content-end ">
+                <select class="form-control me-3" style="width: 100px" name="payment_mode" id="payment_mode">
+                    <option>cash</option>
+                    <option>pos</option>
+                    <option>transfer</option>
+                </select>
+                <a href="/pos?trno={{ rand(111111, 3444444445409) }}" class="btn btn-secondary me-2"><i
+                        class="fa fa-stop"></i> Put On Hold</a>
+                <button class="btn btn-danger clear_cart me-2" data-trno="{{ $_GET['trno'] }}"> <i class="fa fa-ban"></i>
+                    Cancel</button>
+                <button class="btn btn-success checkout-only me-2"> <i class="fa fa-save"></i> Save Only</button>
+                <button class="btn btn-primary checkout"> <i class="fa fa-print"></i> Save and Print</button>
             </div>
         </div>
     </div>
@@ -148,6 +206,8 @@
 
             function displayCart() {
                 items = getItems();
+
+                items = items.reverse();
                 card = $('.cart_list');
                 card.html(``);
 
@@ -160,6 +220,8 @@
                 cart_total = 0;
 
                 total_qty = 0;
+
+
 
                 items.map((item, index) => {
                     console.log(item);
@@ -348,6 +410,8 @@
                         var win = window.open(URL, "_blank", strWindowFeatures);
                         window.open(URL, '_blank');
                         // printPage(URL)
+
+                        location.reload();
                     }
 
                     if (summary_id > 0) {
@@ -355,7 +419,8 @@
                     }
 
 
-
+                    location.reload();
+                    
                 }).fail(function(res) {
                     console.log(res);
                     btn.html(`${btn_html}`)

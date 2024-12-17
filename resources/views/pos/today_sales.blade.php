@@ -60,20 +60,27 @@
         <div class="col-lg-12 col-md-12 col-12">
             <div class="card mt-3">
                 <div class="card-body">
-                    <h4 class="fw-bold"> <i class="fe fe-list"> </i> Sales List (<?= $day ?>)</h4>
+                    <div class="d-flex justify-content-between">
+                        <h4 class="fw-bold"> <i class="fe fe-list"> </i> Sales List (<?= $day ?>)</h4>
 
+                        <select name="sales_period" id="" class="mb-2" >
+                            <option value="morning">Morning Sales</option>
+                            <option value="afternoon">Afternoon Sales</option>
+                        </select>
+
+                    </div>
                     @if ($sales->count() == 0)
                         <div class="alert alert-warning">
-                            No sales has been made today <span class="fw-bold" > ( {{ date('D M j, Y',strtotime(($day))) }} )</span> 
+                            No sales has been made today <span class="fw-bold"> ( {{ date('D M j, Y', strtotime($day)) }}
+                                )</span>
                             <br>
                             Your sales will appear here when they are logged!!
                         </div>
                     @else
-                        <table class="table table-sm mt-2  ">
+                        <table class="table table-striped table-sm mt-2  ">
                             <tr>
                                 <th>Receipt</th>
                                 <th>items</th>
-                                <th></th>
                                 <th>Total</th>
                                 <th>Payment Mode</th>
                                 <th>Customer</th>
@@ -93,38 +100,45 @@
                                 @endphp
                                 <tr class="py-4">
                                     <td class="align-middle"> # {{ $sum->id }} </td>
-                                    <td colspan="2" class="align-middle" style="white-space: wrap" >
-                                            @foreach ($sum->sales as $item)
-                                                    <b class="fw-bold" >{{ $item->item->name }}</b> ({{ $item->quantity }} x {{ $item->price }} )
-                                            @endforeach
+                                    <td colspan="1" class="align-middle" style="white-space: wrap; width: 50%">
+                                        @foreach ($sum->sales as $item)
+                                            <b class="fw-bold">{{ $item->item->name }}</b> ({{ $item->quantity }} x
+                                            {{ $item->price }} )
+                                        @endforeach
                                     </td>
                                     <td class="align-middle">{{ money($sum->total) }}</td>
                                     <td class="align-middle">
-                                        <span class="badge {{ ($sum->payment_mode == 'cash') ? 'bg-info' : 'bg-warning' }} " >{{ ($sum->payment_mode) }}  </span>
+                                        <span
+                                            class="badge {{ $sum->payment_mode == 'cash' ? 'bg-info' : 'bg-warning' }} ">{{ $sum->payment_mode }}
+                                        </span>
                                     </td>
                                     <td class="align-middle">{{ $sum->customer->phone }}</td>
                                     <td class="align-middle">
-                                        {{ $sum->created_at }}
+                                        {{ formatDate($sum->created_at) }}
                                     </td>
                                     <td class="align-middle">
-                                        <button class="btn btn-xs px-1 print_here py-0 btn-primary"
-                                            data-id="{{ $sum->id }}">
-                                            <i class="fe fe-printer"> </i> </button>
+                                        <div class="d-flex justify-content-end ">
+                                            <button class="btn btn-xs me-2 px-1 print_here py-0 btn-primary"
+                                                data-id="{{ $sum->id }}">
+                                                <i class="fe fe-printer"> </i> </button>
 
-                                        @if (date('ymd', strtotime($sum->created_at)) == date('ymd'))
-                                            <a class="btn btn-xs px-1  py-0 btn-info" data-id="{{ $sum->id }}"
-                                                href="/pos?trno={{ rand(1111111111, 99999999999) }}&sales_id={{ $sum->id }}&action=edit_sales">
-                                                <i class="fe fe-edit"> </i> </a>
-                                        @endif
+                                            @if (date('ymd', strtotime($sum->created_at)) == date('ymd'))
+                                                <a class="btn btn-xs px-1  py-0 btn-info" data-id="{{ $sum->id }}"
+                                                    href="/pos?trno={{ rand(1111111111, 99999999999) }}&sales_id={{ $sum->id }}&action=edit_sales">
+                                                    <i class="fe fe-edit"> </i> </a>
+                                            @endif
+                                        </div>
                                     </td>
                                 </tr>
-                                <tr>
-                                    <th colspan="3"></th>
-                                    <th><?= money($tot) ?></th>
-                                    <th colspan="2"></th>
-                                    <th colspan="4"></th>
-                                </tr>
                             @endforeach
+
+
+                            <tr>
+                                <th colspan="3"></th>
+                                <th><?= money($tot) ?></th>
+                                <th colspan="2"></th>
+                                <th colspan="4"></th>
+                            </tr>
 
                         </table>
                     @endif

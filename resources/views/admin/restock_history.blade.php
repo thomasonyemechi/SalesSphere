@@ -1,4 +1,4 @@
-@extends('layout.admin')
+@extends('layout.app')
 @section('page_title')
     Restock History For All Items
 @endsection
@@ -86,9 +86,7 @@
                     <h4 class="fw-bold"> <i class="fe fe-list"> </i> Restock List (<?= $day ?>)</h4>
                     <table class="table table-sm mt-2  ">
                         <tr>
-                            <th>Receipt</th>
                             <th>items</th>
-                            <th></th>
                             <th>Total</th>
                             <th>Supplier</th>
                             <th>Date</th>
@@ -107,37 +105,30 @@
                                 $tot += $restock['total'];
                             @endphp
                             <tr class="py-4">
-                                <td class="align-middle"> # {{ $restock->id }} </td>
-                                <td colspan="2" class="align-middle">
-                                    <ul style="margin-bottom: 0px;">
+                                <td colspan="1" class="align-middle" style="white-space: wrap; width: 50%">
                                         @foreach ($restock->restocks as $item)
-                                            <li>
-                                                {{ $item->item->name }}
-                                                (<span style="font-weight: bolder;">
-                                                    {{ $item->quantity }} x {{ $item->price }}
-                                                </span>)
-                                            </li>
+                                            <b class="fw-bold">{{ $item->item->name }}</b> ({{ $item->quantity }} x
+                                            {{ $item->price }} )
                                         @endforeach
-                                    </ul>
                                 </td>
                                 <td class="align-middle">{{ money($restock->total) }}</td>
                                 <td class="align-middle">{{ $restock->supplier->phone }}</td>
                                 <td class="align-middle">
-                                    {{ $restock->created_at }}
+                                    {{ formatDate($restock->created_at) }}
                                 </td>
-                                <td class="align-middle">
+                                <td class="align-middle text-end">
                                     <a href="/admin/stock/delete/{{ $restock->id }}" class="text-danger"
                                         onclick="return confirm('This restock will be deleted and stock price will be affected ')">
                                         <i class="fa fa-trash"></i> </a>
                                 </td>
                             </tr>
-                            <tr>
-                                <th colspan="3"></th>
-                                <th><?= money($tot) ?></th>
-                                <th colspan="2"></th>
-                                <th colspan="4"></th>
-                            </tr>
                         @endforeach
+
+                        <tr>
+                            <th >Restock Total</th>
+                            <th><?= money($tot) ?></th>
+                            <th colspan="3"></th>
+                        </tr>
 
                     </table>
 

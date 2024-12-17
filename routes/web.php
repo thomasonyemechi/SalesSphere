@@ -96,7 +96,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/create-expenses', [ExpensesController::class, 'createExpense']);
         Route::get('/delete_expenses_category/{id}', [ExpensesController::class, 'deleExpenseCategory']);
 
-        Route::get('/stock-profile/{item}', [ItemController::class, 'adminStockProfile']);
+        Route::get('/stock-profile/{item?}', [ItemController::class, 'adminStockProfile']);
 
 
         Route::get('/staff/{id}', [StaffController::class, 'staffProfileIndex']);

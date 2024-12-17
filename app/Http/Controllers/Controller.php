@@ -14,4 +14,14 @@ class Controller extends BaseController
     // {
     //     public 
     // }
+
+
+    function clean_str($str)
+    {
+      if($str){
+        $cleanStr = preg_replace('/[^A-Za-z0-9 ]/', '', $str);
+        return $cleanStr;
+      }
+    }
+
 }

@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Item;
 use App\Models\Restock;
 use App\Models\Sales;
+use App\Models\Stock;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -30,18 +31,11 @@ class ItemController extends Controller
         return view('pos.add_item', compact(['items', 'categories']));
     }
 
-    function clean_str($str)
-    {
-      if($str){
-        $cleanStr = preg_replace('/[^A-Za-z0-9 ]/', '', $str);
-        return $cleanStr;
-      }
-    }
 
 
     function searchItem(Request $request)
     {
-        $items = Item::where('name', 'like', "%$request->s%")->limit(20)->get(['name', 'price', 'brand', 'id']);
+        $items = Item::where('name', 'like', "%$request->s%")->limit(20)->get(['name','cost_price', 'price', 'brand', 'id']);
         foreach ($items as $item) {
             $item['quantity'] = itemQty($item->id);
             $item->name = $this->clean_str($item->name);
@@ -120,16 +114,22 @@ class ItemController extends Controller
 
 
 
-    function adminStockProfile(Request $request, $item)
+    function adminStockProfile(Request $request, $item="")
     {
-        $item = Item::findorfail($item);
 
-        $item->quantity = itemQty($item->id);
+        $item = Item::find($item);
+
+        if($item){
+
+            $item->quantity = itemQty($item->id);
 
 
-        $recent_sales = Sales::where(['item_id' => $item->id])->orderby('id', 'desc')->limit(10)->get();
-        $restock_histories = Restock::where(['item_id' => $item->id])->orderby('id', 'desc')->limit(10)->get();
+            $recent_sales = Stock::where(['item_id' => $item->id])->orderby('id', 'desc')->limit(40)->get();
 
-        return view('admin.item_profile', compact(['item', 'restock_histories', 'recent_sales']));
+            return view('admin.item_profile', compact(['item', 'recent_sales']));
+        }
+
+        return view('admin.item_profile');
+
     }
 }

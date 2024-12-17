@@ -1,4 +1,4 @@
-@extends('layout.admin')
+@extends('layout.app')
 @section('page_title')
     Restock Items
 @endsection

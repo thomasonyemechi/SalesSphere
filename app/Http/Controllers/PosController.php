@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Item;
 use App\Models\Organization;
 use App\Models\Sales;
 use App\Models\SalesSummary;
@@ -32,7 +33,16 @@ class PosController extends Controller
             $sales_id = $request->sales_id;
         }
 
-        return view('pos.pos', compact(['sales_id']));
+        $items = Item::orderby('updated_at', 'desc')->limit(30)->get();
+        foreach ($items as $item) {
+            $item['quantity'] = itemQty($item->id);
+            $item->name = $this->clean_str($item->name);
+            $item->brand = $this->clean_str($item->brand);
+        }
+
+
+
+        return view('pos.pos', compact(['sales_id', 'items']));
     }
 
 
